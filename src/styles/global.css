@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@theme {
+    --color-wott-50: #fffbeb;
+    --color-wott-100: #fef3c7;
+    --color-wott-200: #fde68a;
+    --color-wott-400: #f59e0b;
+    --color-wott-primary: #d97724;
+    --color-wott-dark: #b45309;
+    --color-wott-ink: #18181b;
+    --color-wott-cream: #faf7f2;
+
+    --font-dirty-weather: 'Dirty Weather', sans-serif;
+}
+
+@font-face {
+    font-family: 'Dirty Weather';
+    src: url('/fonts/dirtyweatherfont.ttf') format('truetype');
+    font-weight: bold;
+    font-style: bold;
+    font-display: swap;
+}
+
+/* Global Defaults */
+@layer base {
+
+    /* Default page background and font color */
+    body {
+        @apply bg-stone-800 text-wott-cream antialiased;
+    }
+
+    /* Default link colors and hover transitions */
+    a {
+        @apply text-wott-primary hover:text-wott-dark transition-colors;
+    }
+
+    /* Accent highlight color when selecting text on the page */
+    ::selection {
+        @apply bg-wott-primary text-white;
+    }
+}

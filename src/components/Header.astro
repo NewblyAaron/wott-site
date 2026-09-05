@@ -1,0 +1,28 @@
+---
+import { Image } from "astro:assets";
+
+import logo from "../assets/wott-logo-dark.PNG";
+
+import NavigationLinks from "./NavigationLinks.astro";
+---
+
+<header
+    class="sticky top-0 z-40 p-4 flex items-center justify-between bg-stone-900/80 backdrop-blur-md border-b border-stone-700/40 shadow-md"
+>
+    <div class="flex gap-8 items-center">
+        <a
+            href="/"
+            aria-label="WOTT Logo"
+            class="relative z-10 h-0 -translate-y-6 block"
+        >
+            <Image
+                src={logo}
+                alt="WOTT Logo"
+                class="h-32 w-auto block drop-shadow-md object-contain"
+            />
+        </a>
+        <div class="flex gap-4 items-center">
+            <NavigationLinks class="font-medium drop-shadow-sm" />
+        </div>
+    </div>
+</header>

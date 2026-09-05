@@ -1,21 +1,262 @@
 ---
+import { Image } from "astro:assets";
 
+import logo from "../assets/wott-logo-dark.png";
+
+import LandingLayout from "../layouts/LandingLayout.astro";
+import LandingSection from "../components/LandingSection.astro";
+import NavigationLinks from "../components/NavigationLinks.astro";
+
+const pageTitle = "Home";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>What's On The Table?</title>
-	</head>
-	<body>
-		<a href="/">Home</a>
-		<a href="/about">About</a>
-		<a href="/blog">Blog</a>
+<LandingLayout pageTitle={pageTitle}>
+	<!-- Fixed Header Bar matching Header.astro layout -->
+	<header
+		id="landing-header"
+		class="fixed top-0 left-0 w-full z-40 p-4 flex items-center justify-between border-b border-transparent transition-colors duration-500"
+	>
+		<div class="flex gap-8 items-center">
+			<!-- Header Logo Slot matching Header.astro's exact position & offset -->
+			<div class="relative z-10 h-0 -translate-y-6">
+				<Image
+					id="header-logo-target"
+					src={logo}
+					alt=""
+					class="invisible h-32 w-auto block"
+				/>
+			</div>
 
-		<h1>WOTT</h1>
-		<p>Welcome to What's On The Table (WOTT)!</p>
-	</body>
-</html>
+			<div class="flex gap-4">
+				<NavigationLinks class="font-medium drop-shadow-sm" />
+			</div>
+		</div>
+	</header>
+
+	<style is:global>
+		#landing-header a {
+			color: #ffffff !important;
+			transition: color 0.5s ease;
+		}
+		#landing-header a:hover {
+			color: var(--color-wott-primary) !important;
+		}
+		#landing-header.is-scrolled a {
+			color: var(--color-wott-primary) !important;
+		}
+		#landing-header.is-scrolled a:hover {
+			color: var(--color-wott-dark) !important;
+		}
+	</style>
+
+	<!-- Persistent Floating Logo that smoothly transitions between Hero and Header -->
+	<a
+		id="floating-logo"
+		href="/"
+		aria-label="WOTT Logo"
+		class="fixed z-50 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] origin-top-left cursor-pointer"
+		style="opacity: 0;"
+	>
+		<Image
+			src={logo}
+			alt="WOTT Logo"
+			class="w-full h-full object-contain drop-shadow-md"
+		/>
+	</a>
+
+	<!-- Scroll Container -->
+	<main
+		id="scroll-container"
+		class="h-screen overflow-y-auto snap-y snap-mandatory scroll-smooth"
+	>
+		<LandingSection
+			id="hero-section"
+			class="antialiased bg-[url('/wood-pattern.jpg')] bg-repeat bg-[size:800px]"
+		>
+			<div class="flex-1 flex items-center justify-center">
+				<!-- Hero Logo Slot (Source Position) -->
+				<div
+					class="w-full max-w-md aspect-square flex items-center justify-center"
+				>
+					<Image
+						id="hero-logo-target"
+						src={logo}
+						alt="WOTT Logo Placeholder"
+						class="invisible w-full h-full object-contain"
+					/>
+				</div>
+			</div>
+			<div class="flex-1 flex flex-col justify-center">
+				<h1
+					class="text-8xl [text-shadow:2px_3px_0_var(--color-wott-cream)] text-center leading-17 font-bold text-wott-primary font-dirty-weather"
+				>
+					What's On<br />The Table?
+				</h1>
+				<p class="text-wott-cream text-xl text-center mt-4">
+					Under construction, but check back soon for updates!
+				</p>
+			</div>
+		</LandingSection>
+
+		<LandingSection>
+			<div class="flex flex-col justify-center items-center w-full">
+				<h1
+					class="text-5xl font-bold font-dirty-weather text-wott-primary mb-4"
+				>
+					Board Games Section
+				</h1>
+				<p class="text-wott-cream text-lg">
+					we put the board of the games :O
+				</p>
+			</div>
+		</LandingSection>
+
+		<LandingSection>
+			<div class="flex flex-col justify-center items-center w-full">
+				<h1
+					class="text-5xl font-bold font-dirty-weather text-wott-primary mb-4"
+				>
+					Video Games Section
+				</h1>
+				<p class="text-wott-cream text-lg">
+					we put the video of the games :O
+				</p>
+			</div>
+		</LandingSection>
+	</main>
+</LandingLayout>
+
+<script>
+	const heroSection = document.getElementById("hero-section");
+	const heroLogoTarget = document.getElementById("hero-logo-target");
+	const headerLogoTarget = document.getElementById("header-logo-target");
+	const floatingLogo = document.getElementById("floating-logo");
+	const landingHeader = document.getElementById("landing-header");
+	const scrollContainer = document.getElementById("scroll-container");
+
+	let isScrolled = false;
+
+	function getHeroBaseRect() {
+		if (!heroLogoTarget || !scrollContainer) return null;
+		const rect = heroLogoTarget.getBoundingClientRect();
+		return {
+			// Offset by current scrollTop/scrollLeft so we get the unscrolled (Section 1) position
+			top: rect.top + scrollContainer.scrollTop,
+			left: rect.left + scrollContainer.scrollLeft,
+			width: rect.width,
+			height: rect.height,
+		};
+	}
+
+	function getHeaderRect() {
+		if (!headerLogoTarget) return null;
+		return headerLogoTarget.getBoundingClientRect();
+	}
+
+	function updateLogoPosition(animate = true) {
+		if (!floatingLogo) return;
+
+		const rect = isScrolled ? getHeaderRect() : getHeroBaseRect();
+		if (!rect) return;
+
+		if (!animate) {
+			floatingLogo.style.transition = "none";
+		} else {
+			floatingLogo.style.transition =
+				"all 0.7s cubic-bezier(0.16, 1, 0.3, 1)";
+		}
+
+		floatingLogo.style.top = `${rect.top}px`;
+		floatingLogo.style.left = `${rect.left}px`;
+		floatingLogo.style.width = `${rect.width}px`;
+		floatingLogo.style.height = `${rect.height}px`;
+		floatingLogo.style.opacity = "1";
+
+		if (landingHeader) {
+			if (isScrolled) {
+				landingHeader.classList.add(
+					"is-scrolled",
+					"bg-stone-900/80",
+					"backdrop-blur-md",
+					"border-stone-700/40",
+					"shadow-md",
+				);
+				landingHeader.classList.remove("border-transparent");
+			} else {
+				landingHeader.classList.remove(
+					"is-scrolled",
+					"bg-stone-900/80",
+					"backdrop-blur-md",
+					"border-stone-700/40",
+					"shadow-md",
+				);
+				landingHeader.classList.add("border-transparent");
+			}
+		}
+	}
+
+	function setScrolledState(scrolled: boolean, animate = true) {
+		if (isScrolled === scrolled && animate) return;
+		isScrolled = scrolled;
+		updateLogoPosition(animate);
+	}
+
+	function handleScroll() {
+		if (!scrollContainer) return;
+		const threshold =
+			(heroSection?.clientHeight || window.innerHeight) * 0.35;
+		setScrolledState(scrollContainer.scrollTop > threshold, true);
+	}
+
+	// Scroll listener on the snap container
+	scrollContainer?.addEventListener("scroll", handleScroll, {
+		passive: true,
+	});
+
+	// IntersectionObserver for snap-scrolling transitions
+	const observer = new IntersectionObserver(
+		([entry]) => {
+			setScrolledState(!entry.isIntersecting, true);
+		},
+		{
+			root: scrollContainer,
+			threshold: 0.4,
+		},
+	);
+
+	if (heroSection) {
+		observer.observe(heroSection);
+	}
+
+	// Position initialization
+	const init = () => {
+		handleScroll();
+		updateLogoPosition(false);
+	};
+
+	if (document.readyState === "complete") {
+		init();
+	} else {
+		window.addEventListener("load", init);
+		document.addEventListener("DOMContentLoaded", init);
+	}
+
+	// Re-check to ensure styles/images have resolved layout
+	requestAnimationFrame(() => {
+		init();
+	});
+
+	// Click logo to scroll smoothly to hero section without adding a hash to the URL
+	floatingLogo?.addEventListener("click", (e) => {
+		e.preventDefault();
+		scrollContainer?.scrollTo({
+			top: 0,
+			behavior: "smooth",
+		});
+	});
+
+	// Keep positions aligned on window resize
+	window.addEventListener("resize", () => {
+		updateLogoPosition(false);
+	});
+</script>

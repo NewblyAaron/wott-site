@@ -1,0 +1,20 @@
+---
+interface Props {
+    id?: string;
+    class?: string;
+    [key: string]: any;
+}
+
+const { id, class: className, ...rest } = Astro.props;
+---
+
+<section
+    id={id}
+    class:list={[
+        "h-screen w-full snap-start flex flex-row gap-8 p-8",
+        className,
+    ]}
+    {...rest}
+>
+    <slot />
+</section>
